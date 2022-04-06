@@ -1,0 +1,183 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 02/17/2022 10:04:36 PM
+// Design Name: 
+// Module Name: Rover_Movement_Design
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+module Rover_Movement_Design(
+
+   //inputs
+    input clock,        
+    input IPS_left,
+    input IPS_mid,
+    input IPS_right,
+    
+    //outputs
+    output left_forward,
+    output left_backward,
+    output right_forward,
+    output right_backward,
+    output a, b, c, d, e, f, g, //the individual LED output for the seven segment
+    output [3:0]an
+    
+    );
+    
+    localparam N = 20;    // parametrized bit count
+                          // allows us to multiplex and run clock frequency at 95Hz
+                          // width from (0 - 2^20) - 1 or (0 - 1048575)      
+    reg [N-1:0] counter;  
+    reg [N-1:0] width;    
+    
+    reg temp_left_forward;      // temporary outputs
+    reg temp_left_backward;      
+    reg temp_right_forward;
+    reg temp_right_backward;
+    reg temp_an;
+    reg temp_sseg;
+    
+    initial begin    
+        counter = 0;
+        width = 0;
+        temp_left_forward = 0;
+        temp_left_backward = 0;
+        temp_right_forward = 0;
+        temp_right_backward = 0;
+    end
+    
+    always @ (posedge clock) begin
+        
+        counter = counter + 1;  //increment counter every clock cycle
+        
+        
+        
+        if (IPS_left == 1 && IPS_mid == 1 && IPS_right == 0) begin              
+            
+            temp_left_backward <= 0;
+            temp_right_forward <= 0;            
+            
+            if (counter < width) begin
+                temp_left_forward <= 1;
+                temp_right_backward <= 1;
+              end 
+            
+            else begin
+                temp_left_forward <= 0;
+                temp_right_backward <= 0;
+              end            
+        end
+            
+           
+        if (IPS_left == 1 && IPS_mid == 0 && IPS_right == 1) begin              
+            
+            temp_left_backward <= 0;
+            temp_right_backward <= 0;            
+            
+            if (counter < width) begin
+                temp_left_forward <= 1;
+                temp_right_forward <= 1;
+              end 
+            
+            else begin
+                temp_left_forward <= 0;
+                temp_right_forward <= 0;
+              end            
+        end
+        
+        if (IPS_left == 1 && IPS_mid == 0 && IPS_right == 0) begin              
+            
+            temp_left_backward <= 0;
+            temp_right_forward <= 0;            
+            temp_right_backward <= 0;
+            
+            if (counter < width) begin
+                temp_left_forward <= 1;                
+              end 
+            
+            else begin
+                temp_left_forward <= 0;                
+              end            
+        end 
+        
+        if (IPS_left == 0 && IPS_mid == 1 && IPS_right == 1) begin              
+            
+            temp_left_forward <= 0;
+            temp_right_backward <= 0;            
+            
+            if (counter < width) begin
+                temp_left_backward <= 1;
+                temp_right_forward <= 1;
+              end 
+            
+            else begin
+                temp_left_backward <= 0;
+                temp_right_forward <= 0;
+              end            
+        end          
+        
+
+        if (IPS_left == 0 && IPS_mid == 0 && IPS_right == 1) begin              
+            
+            temp_left_forward <= 0;
+            temp_left_backward <= 0;                        
+            temp_right_backward <= 0;
+            
+            if (counter < width) begin
+                temp_right_forward <= 1;                
+              end 
+            
+            else begin
+                temp_right_forward <= 0;                
+              end            
+        end 
+        
+               
+        
+    //end of IPS test
+    end
+    
+    always @ (posedge clock) begin
+    
+        
+            
+        //if ((IPS_left == 0 && IPS_mid == 0 && IPS_right == 0) || (IPS_left == 0 && IPS_mid == 0 && IPS_right == 1) || (IPS_left == 0 && IPS_mid == 1 && IPS_right == 0) || (IPS_left == 0 && IPS_mid == 1 && IPS_right == 1) || (IPS_left == 1 && IPS_mid == 0 && IPS_right == 0) || (IPS_left == 1 && IPS_mid == 1 && IPS_right == 0) || (IPS_left == 1 && IPS_mid == 1 && IPS_right == 1)) begin
+        if (IPS_left == 0 || IPS_mid == 0 || IPS_right == 0) begin   
+            //width = 20'd524075;     // 50% duty cycle
+            width = 20'd1048575;
+            //width = 5'd15;  
+        end
+        else begin
+           
+            width = 20'd0;     // 0% duty cycle
+        end
+    end
+    
+    always @ (*) begin
+        temp_an = 4'b1110;
+        temp_sseg = 7'b0111111;
+    end
+    
+    // assign temp registers to outputs
+    assign left_forward = temp_left_forward;
+    assign left_backward = temp_left_backward;
+    assign right_forward = temp_right_forward;        
+    assign right_backward = temp_right_backward;
+    assign {g, f, e, d, c, b, a} = temp_sseg; 
+    assign an = temp_an;
+   
+         
+endmodule
