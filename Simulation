@@ -1,0 +1,119 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 02/18/2022 12:57:35 AM
+// Design Name: 
+// Module Name: Rover_Movement_Testbench
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+module Rover_Movement_Testbench(
+    );
+    
+     //inputs
+     reg clock;        
+     reg IPS_left;
+     reg IPS_mid;
+     reg IPS_right;
+     
+     //outputs
+     wire left_forward;
+     wire left_backward;
+     wire right_forward;     
+     wire right_backward;
+     
+     Rover_Movement_Design UUT(clock, IPS_left, IPS_mid, IPS_right, left_forward, left_backward, right_forward, right_backward);
+         
+     initial begin
+     
+        clock = 0;
+        IPS_left = 1;
+        IPS_mid = 1;
+        IPS_right = 1;
+        #10
+        
+        IPS_left = 1;
+        IPS_mid = 1;
+        IPS_right = 1;
+        #300
+        
+        IPS_left = 1;
+        IPS_mid = 1;
+        IPS_right = 0;
+        #300  
+        
+        IPS_left = 1;
+        IPS_mid = 1;
+        IPS_right = 1;
+        #300  
+        
+        IPS_left = 1;
+        IPS_mid = 0;
+        IPS_right = 1;
+        #300          
+        
+        IPS_left = 1;
+        IPS_mid = 1;
+        IPS_right = 1;
+        #300         
+        
+        IPS_left = 1;
+        IPS_mid = 0;
+        IPS_right = 0;
+        #300 
+        
+        IPS_left = 1;
+        IPS_mid = 1;
+        IPS_right = 1;
+        #300          
+        
+        IPS_left = 0;
+        IPS_mid = 1;
+        IPS_right = 1;
+        #300         
+        
+        IPS_left = 1;
+        IPS_mid = 1;
+        IPS_right = 1;
+        #300          
+        
+        IPS_left = 0;
+        IPS_mid = 0;
+        IPS_right = 1;
+        #300          
+        
+        IPS_left = 1;
+        IPS_mid = 1;
+        IPS_right = 1;
+        #300          
+        
+        IPS_left = 0;
+        IPS_mid = 0;
+        IPS_right = 0;
+        #300          
+        
+        IPS_left = 1;
+        IPS_mid = 1;
+        IPS_right = 1;
+
+          
+     end
+     
+     always begin
+         #10 clock = ~clock;  //BASYS board clock speed of 100MHz
+     end
+    
+endmodule
